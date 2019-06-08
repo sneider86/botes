@@ -24,7 +24,7 @@ if ($con->connect_error) {
         $_SESSION['nombre']     = $row['nombre'];
         $_SESSION['idUser']     = $row['idUser'];
         $_SESSION['idPerfil']   = $row['idPerfil'];
-        $_SESSION['url_base']   = 'https://botesdelabahia.com/administrar';
+        $_SESSION['url_base']   = $urlbas['url'].'administrar';
         $result->close();
         $sql = 'SELECT permiso,modulo FROM wp_es_permisos WHERE perfil='.$_SESSION['idPerfil'];
         $result = $con->query($sql);
@@ -35,7 +35,7 @@ if ($con->connect_error) {
         $_SESSION['permisos'] = $permisos;
 
         $con->close();
-        header('Location: https://botesdelabahia.com/administrar/production?v='.date('his'));
+        header('Location: '.$urlbas['url'].'administrar/production?v='.date('his'));
     }else{
         $result->close();
         $con->close();
