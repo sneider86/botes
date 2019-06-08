@@ -1,0 +1,2 @@
+[12-May-2019 06:37:54 UTC] PHP Warning:  mysqli::mysqli(): (HY000/2005): Unknown MySQL server host 'mysql' (0) in /home/botesdelabahia/public_html/administrar/controllerlogin.php on line 4
+[12-May-2019 06:38:13 UTC] PHP Warning:  mysqli::mysqli(): (HY000/2005): Unknown MySQL server host 'mysql' (0) in /home/botesdelabahia/public_html/administrar/controllerlogin.php on line 4
