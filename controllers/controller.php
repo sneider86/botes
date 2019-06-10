@@ -840,7 +840,7 @@ if(isset($_POST['action']) && isset($_SESSION['idPerfil']) && !empty($_SESSION['
                 $base = $_SESSION['precio'] + $valcat;
                 $desc = 0;
                 $totaldec = 0;
-                echo 'desc: '.$_SESSION['desc'];
+                $_SESSION['desc'];
                 if(isset($_SESSION['desc'])){
                     $desc =  ($_SESSION['precio']*$_SESSION['desc'])/100;
                     $totaldec = $base - $desc;
