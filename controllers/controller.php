@@ -838,6 +838,13 @@ if(isset($_POST['action']) && isset($_SESSION['idPerfil']) && !empty($_SESSION['
                     }
                 }
                 $base = $_SESSION['precio'] + $valcat;
+                $desc = 0;
+                $totaldec = 0;
+                if(isset($_SESSION['desc'])){
+                    $desc =  ($_SESSION['precio']*$_SESSION['desc'])/100;
+                    $totaldec = $base - $desc;
+                }
+                
                 $html = '
                 <div>
                     <h3>RESUMEN</h3>
@@ -859,6 +866,16 @@ if(isset($_POST['action']) && isset($_SESSION['idPerfil']) && !empty($_SESSION['
                     <h3><span>$'.number_format($base,0,".",",").'</span></h3>
                 </div>
                 ';
+                $totaldec = $base - $desc;
+                if($desc>0){
+                    $html=$html.'
+                    <div>
+                        <h3>Descuento: <span>$'.number_format($desc,0,".",",").'</span></h3>
+                    </div>
+                    <div>
+                        <h3>Total: <span>$'.number_format($totaldec,0,".",",").'</span></h3>
+                    </div>';    
+                }
                 //$_SESSION['precio']
                 echo json_encode( array("response"=>'success','mensaje'=> 'Informaci&oacute;n cargada con exito. ','html'=>$html ) );
             break;
@@ -955,6 +972,12 @@ if(isset($_POST['action']) && isset($_SESSION['idPerfil']) && !empty($_SESSION['
                     $row = $result->fetch_assoc();
                     if(isBoteDisponible($con,$fecha,$bote,$plan)){
                         $_SESSION['idCliente']     = $row['id'];
+                        if(isset($_SESSION['desc'])){
+                            $desc =  ($_SESSION['precio']*$_SESSION['desc'])/100;
+                            $totaldec = $_SESSION['precio'] - $desc;
+                            $_SESSION['precio'] = $totaldec;
+                        }
+                        
                         $idAgenda = guardarAgenda($con,$fecha,$pasajeros,$plan,$bote,$_SESSION['idCliente'],$asesor);
                         if($idAgenda){
                             $_SESSION['reserva'] = (isset($_SESSION['precio']))?$_SESSION['precio']:0;
@@ -993,6 +1016,11 @@ if(isset($_POST['action']) && isset($_SESSION['idPerfil']) && !empty($_SESSION['
                 $desc       = (isset($_POST['desc']))?filter_var($_POST['desc'],FILTER_SANITIZE_STRING):'';
                 if(!empty($nombre) && !empty($apellido) && !empty($telefono) && !empty($email) && !empty($documento) && !empty($direccion) && !empty($usuario) && !empty($clave)){
                     try{
+                        if(isset($_SESSION['desc'])){
+                            $desc =  ($_SESSION['precio']*$_SESSION['desc'])/100;
+                            $totaldec = $_SESSION['precio'] - $desc;
+                            $_SESSION['precio'] = $totaldec;
+                        }
                         $sql = "INSERT INTO wp_es_clientes(nombre,apellido,telefono,direccion,email,clave,asesor,documento) 
                         VALUE('$nombre','$apellido','$telefono','$direccion','$email',MD5('$clave'),'$usuario','$documento')";
                         $con->query($sql);
