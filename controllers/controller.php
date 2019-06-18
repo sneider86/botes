@@ -816,6 +816,7 @@ if(isset($_POST['action']) && isset($_SESSION['idPerfil']) && !empty($_SESSION['
         break;
     }
 }else{
+
     if(isset($_POST['action'])){
         switch($_POST['action']){
             case 'detalleplanfront':
@@ -840,7 +841,6 @@ if(isset($_POST['action']) && isset($_SESSION['idPerfil']) && !empty($_SESSION['
                 $base = $_SESSION['precio'] + $valcat;
                 $desc = 0;
                 $totaldec = 0;
-                $_SESSION['desc'];
                 if(isset($_SESSION['desc'])){
                     $desc =  ($_SESSION['precio']*$_SESSION['desc'])/100;
                     $totaldec = $base - $desc;
@@ -1044,6 +1044,25 @@ if(isset($_POST['action']) && isset($_SESSION['idPerfil']) && !empty($_SESSION['
                 }else{
                     echo json_encode( array("response"=>'fail','mensaje'=> 'Llene todos los campos del formulario' ) );
                 }
+            break;
+            case "validar_bote":
+                $fecha  = date('Y-m-d',strtotime($_POST['fecha'])  ) ;
+                $plan   = $_POST['plan'];
+                $bote   = $_POST['bote'];
+                if(isBoteDisponible($con,$fecha,$bote,$plan)){
+                    echo json_encode( array("response"=>'success','mensaje'=> 'ok' ) );
+                }else{
+                    $sql = "SELECT b.nombre FROM wp_es_solution_shedule s INNER JOIN wp_es_botes b ON(idbote=b.id) WHERE date(startdate)='".$fecha."' AND s.estado='A'";
+                    $result = $con->query($sql);
+                    $body = '';
+                    if($result->num_rows>=1){
+                        while($row = $result->fetch_assoc()){
+                            $body = $body."\n".$row['nombre'];
+                        }
+                    }
+                    echo json_encode( array("response"=>'fail','mensaje'=> "Los siguientes botes NO estan disponibles para esta fecha:".$body ) );
+                }
+                
             break;
         }
     }
