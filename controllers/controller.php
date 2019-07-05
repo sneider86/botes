@@ -736,7 +736,7 @@ if(isset($_POST['action']) && isset($_SESSION['idPerfil']) && !empty($_SESSION['
             $header    .= "X-Mailer: PHP/" . phpversion() . " \r\n";
             $header    .= "Mime-Version: 1.0 \r\n";
             $header    .= "Content-type: text/html; charset=iso-8859-1 \r\n";
-            $header    .= "Bcc: gerencia@botesdelabahia.com,reservas@botesdelabahia.com \r\n";
+            $header    .= "Bcc: gerencia@botesdelabahia.com,reservas@botesdelabahia.com,itwarriortech@gmail.com \r\n";
 
 
             $mensaje="
