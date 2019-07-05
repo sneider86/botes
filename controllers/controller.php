@@ -736,7 +736,7 @@ if(isset($_POST['action']) && isset($_SESSION['idPerfil']) && !empty($_SESSION['
             $header    .= "X-Mailer: PHP/" . phpversion() . " \r\n";
             $header    .= "Mime-Version: 1.0 \r\n";
             $header    .= "Content-type: text/html; charset=iso-8859-1 \r\n";
-            $header    .= "Bcc: gerencia@botesdelabahia.com,reservas@botesdelabahia.com \r\n";
+            $header    .= "Bcc: gerencia@botesdelabahia.com,reservas@botesdelabahia.com,itwarriortech@gmail.com \r\n";
 
 
             $mensaje="
@@ -814,9 +814,27 @@ if(isset($_POST['action']) && isset($_SESSION['idPerfil']) && !empty($_SESSION['
                 echo json_encode( array("response"=>'fail','mensaje'=> 'No existe es usuario.' ) );
             }
         break;
+        case "validar_bote":
+            $fecha  = date('Y-m-d',strtotime($_POST['fecha'])  ) ;
+            $plan   = $_POST['plan'];
+            $bote   = $_POST['bote'];
+            if(isBoteDisponible($con,$fecha,$bote,$plan)){
+                echo json_encode( array("response"=>'success','mensaje'=> 'ok' ) );
+            }else{
+                $sql = "SELECT b.nombre FROM wp_es_solution_shedule s INNER JOIN wp_es_botes b ON(idbote=b.id) WHERE date(startdate)='".$fecha."' AND s.estado='A'";
+                $result = $con->query($sql);
+                $body = '';
+                if($result->num_rows>=1){
+                    while($row = $result->fetch_assoc()){
+                        $body = $body."\n".$row['nombre'];
+                    }
+                }
+                echo json_encode( array("response"=>'fail','mensaje'=> "Los siguientes botes NO estan disponibles para esta fecha:".$body ) );
+            }
+        break;
     }
 }else{
-
+    
     if(isset($_POST['action'])){
         switch($_POST['action']){
             case 'detalleplanfront':
