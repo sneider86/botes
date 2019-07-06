@@ -950,6 +950,7 @@ if(isset($_POST['action']) && isset($_SESSION['idPerfil']) && !empty($_SESSION['
                 $rsbotes = $con->query($sql);
                 $swfirst = false;
                 $html = '';
+                $_SESSION['personas'] = $pasa;
                 foreach($rsbotes as $item){
                     if (in_array($item['id'], $array)) {
                         if(!$swfirst){
@@ -961,7 +962,7 @@ if(isset($_POST['action']) && isset($_SESSION['idPerfil']) && !empty($_SESSION['
                         $html =$html. '<option value="'.$item['id'].'">'.$item['nombre'].'</option>';
                     }
                 }
-                header("Content-type: application/json");
+                //header("Content-type: application/json");
                 echo json_encode( array("response"=>'success','mensaje'=> 'Exito','html'=>$html) );
             break;
             case "cambiar_bote_front":
