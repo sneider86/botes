@@ -6,7 +6,7 @@ if(!isset($_SESSION['permisos'][9]) || $_SESSION['permisos'][9]!=1){
 require_once '../config/configbd.php';
 $con        = new mysqli($bd['host'],$bd['user'],$bd['pass'],$bd['data']);
 $con->set_charset("utf8");
-$sql        = "SELECT id,nombre,descripcion,estado,contenido,franjahoraria FROM wp_es_planes";
+$sql        = "SELECT id,nombre,descripcion,estado,contenido,franjahoraria,contenido_en FROM wp_es_planes";
 $result     = $con->query($sql);
 
         
@@ -492,6 +492,8 @@ $result     = $con->query($sql);
             $("#contenido").val(plan.contenido);
             $("#txtid").val(plan.id);
             $("#horario").val(plan.franjahoraria);
+            $("#editor-one2").html(plan.contenido_en);
+            $("#contenidoingles").val(plan.contenido_en);
           });
         } );
 
@@ -504,6 +506,8 @@ $result     = $con->query($sql);
             $("#contenido").val(plan.contenido);
             $("#txtid").val(plan.id);
             $("#horario").val(plan.franjahoraria);
+            $("#editor-one2").html(plan.contenido_en);
+            $("#contenidoingles").val(plan.contenido_en);
         });
 
         function editar_plan(){
