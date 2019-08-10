@@ -159,6 +159,7 @@ if(isset($_POST['action']) && isset($_SESSION['idPerfil']) && !empty($_SESSION['
             $descripcion    = (isset($_POST['descripcion']))?filter_var($_POST['descripcion'],FILTER_SANITIZE_STRING):'';
             $estado         = (isset($_POST['estado']))?filter_var($_POST['estado'],FILTER_SANITIZE_STRING):'';
             $contenido      = (isset($_POST['contenido']))?filter_var($_POST['contenido'],FILTER_SANITIZE_STRING):'';
+            $contenido_en   = (isset($_POST['contenidoingles']))?filter_var($_POST['contenidoingles'],FILTER_SANITIZE_STRING):'';
             $id             = (isset($_POST['id']))?filter_var($_POST['id'],FILTER_SANITIZE_NUMBER_INT):'';
             $horario        = (isset($_POST['horario']))?filter_var($_POST['horario'],FILTER_SANITIZE_NUMBER_INT):'';
 
@@ -180,9 +181,9 @@ if(isset($_POST['action']) && isset($_SESSION['idPerfil']) && !empty($_SESSION['
             
             if(!empty($nombre) && !empty($descripcion) && !empty($estado)){
                 if(!empty($fileName)){
-                    $sql = "UPDATE wp_es_planes SET nombre='$nombre',descripcion='$descripcion',estado='$estado',contenido='$contenido',urlimage='$uploadedFile',franjahoraria=$horario WHERE id=$id";
+                    $sql = "UPDATE wp_es_planes SET nombre='$nombre',descripcion='$descripcion',estado='$estado',contenido='$contenido',urlimage='$uploadedFile',franjahoraria=$horario,contenido_en='$contenido_en' WHERE id=$id";
                 }else{
-                    $sql = "UPDATE wp_es_planes SET nombre='$nombre',descripcion='$descripcion',estado='$estado',contenido='$contenido',franjahoraria=$horario WHERE id=$id";
+                    $sql = "UPDATE wp_es_planes SET nombre='$nombre',descripcion='$descripcion',estado='$estado',contenido='$contenido',franjahoraria=$horario,contenido_en='$contenido_en' WHERE id=$id";
                 }
                 $con->query($sql);
                 echo json_encode( array("response"=>'success','mensaje'=> 'Plan actualizado con exito' ) );

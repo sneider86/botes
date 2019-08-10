@@ -508,7 +508,7 @@ $result     = $con->query($sql);
 
         function editar_plan(){
             $("#contenido").val( $("#editor-one").html() );
-            $("#contenido_en").val( $("#editor-one2").html() );
+            $("#contenidoingles").val( $("#editor-one2").html() );
 
             var base_url = window.location.origin;
             var formElement = document.getElementById("demo-form2");
