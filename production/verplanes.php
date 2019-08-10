@@ -383,7 +383,7 @@ $result     = $con->query($sql);
                                         </div>
                                         </div>
 
-                                        <div id="editor-one" class="editor-wrapper"></div>
+                                        <div id="editor-one2" class="editor-wrapper"></div>
 
                                         <textarea name="contenidoingles" id="contenidoingles" style="display:none;"></textarea>
                                         
@@ -508,6 +508,7 @@ $result     = $con->query($sql);
 
         function editar_plan(){
             $("#contenido").val( $("#editor-one").html() );
+            $("#contenido_en").val( $("#editor-one2").html() );
 
             var base_url = window.location.origin;
             var formElement = document.getElementById("demo-form2");
