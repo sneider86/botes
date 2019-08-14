@@ -987,7 +987,7 @@ if(isset($_POST['action']) && isset($_SESSION['idPerfil']) && !empty($_SESSION['
                 $fecha      = (isset($_POST['fecha']))?filter_var($_POST['fecha'],FILTER_SANITIZE_STRING):'';
                 $pasajeros  = (isset($_POST['pasajeros']))?filter_var($_POST['pasajeros'],FILTER_SANITIZE_NUMBER_INT):'';
                 $asesor     = 0;
-                $sql        = "SELECT id FROM wp_es_clientes where email='".$usuario."' AND clave=MD5('".$clave."') AND estado='A'";
+                $sql        = "SELECT id FROM wp_es_clientes where email='".$usuario."' AND clave=MD5('".$clave."')";
                 $result     = $con->query($sql);
                 if($result->num_rows>=1){
                     $row = $result->fetch_assoc();
