@@ -1216,6 +1216,7 @@ function notificarEmail($con,$id){
     INNER JOIN wp_es_botes b ON(idbote=b.id)
     INNER JOIN wp_es_orden o ON(o.reserva=s.id)
     WHERE s.estado = 'A' AND s.id=$id";
+    error_log($sql);
     $result = $con->query($sql);
     $abono      = 0;
     $saldo      = '';
