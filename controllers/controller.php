@@ -980,14 +980,14 @@ if(isset($_POST['action']) && isset($_SESSION['idPerfil']) && !empty($_SESSION['
                 echo json_encode( array("response"=>'success','mensaje'=> 'Exito') );
             break;
             case "login":
-                $usuario    = (isset($_POST['usuario']))?filter_var($_POST['usuario'],FILTER_SANITIZE_STRING):'';
+                $usuario    = (isset($_POST['usuario']))?filter_var($_POST['usuario'],FILTER_SANITIZE_EMAIL):'';
                 $clave      = (isset($_POST['clave']))?filter_var($_POST['clave'],FILTER_SANITIZE_STRING):'';
                 $plan       = (isset($_POST['plan']))?filter_var($_POST['plan'],FILTER_SANITIZE_NUMBER_INT):'';
                 $bote       = (isset($_POST['bote']))?filter_var($_POST['bote'],FILTER_SANITIZE_NUMBER_INT):'';
                 $fecha      = (isset($_POST['fecha']))?filter_var($_POST['fecha'],FILTER_SANITIZE_STRING):'';
                 $pasajeros  = (isset($_POST['pasajeros']))?filter_var($_POST['pasajeros'],FILTER_SANITIZE_NUMBER_INT):'';
                 $asesor     = 0;
-                $sql        = "SELECT id FROM wp_es_usuarios where usuario='".$usuario."' AND clave=MD5('".$clave."') AND estado='A'";
+                $sql        = "SELECT id FROM wp_es_clientes where email='".$usuario."' AND clave=MD5('".$clave."') AND estado='A'";
                 $result     = $con->query($sql);
                 if($result->num_rows>=1){
                     $row = $result->fetch_assoc();
@@ -1216,7 +1216,6 @@ function notificarEmail($con,$id){
     INNER JOIN wp_es_botes b ON(idbote=b.id)
     INNER JOIN wp_es_orden o ON(o.reserva=s.id)
     WHERE s.estado = 'A' AND s.id=$id";
-    error_log($sql);
     $result = $con->query($sql);
     $abono      = 0;
     $saldo      = '';
