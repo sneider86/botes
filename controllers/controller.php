@@ -1332,7 +1332,7 @@ function notificarEmail($con,$id){
     </table>"."<br/>***Favor validar si esta reserva tiene pagos abonados***";
     $asunto     = 'RESERVA ONLINE';
     mail($para, $asunto, utf8_decode($mensaje), $header);
-    echo json_encode( array("response"=>'success','mensaje'=> 'Mensaje Enviado.') );
+    //echo json_encode( array("response"=>'success','mensaje'=> 'Mensaje Enviado.') );
 }
 
 
