@@ -1007,7 +1007,7 @@ if(isset($_POST['action']) && isset($_SESSION['idPerfil']) && !empty($_SESSION['
                                 $total = (isset($_SESSION['totalventa']))?$_SESSION['totalventa']:0;
                                 if(!empty($irOrder)){
                                     echo json_encode( array("response"=>'success','mensaje'=> 'Sesion Iniciada','idOrden'=>$irOrder,'total'=>'$'.number_format($total,0,".",",") ) );
-                                    notificarEmail($idAgenda);
+                                    notificarEmail($con,$idAgenda);
                                     unset($_SESSION['reserva']);
                                 }else{
                                     echo json_encode( array("response"=>'fail','mensaje'=> 'No se pudo crear orden.' ) );
@@ -1059,7 +1059,7 @@ if(isset($_POST['action']) && isset($_SESSION['idPerfil']) && !empty($_SESSION['
                         $idOrden = generarFacturacion($con,$bote,$plan,$fecha,$idAgenda);
                         $total = (isset($_SESSION['totalventa']))?$_SESSION['totalventa']:0;
                         echo json_encode( array("response"=>'success','mensaje'=> 'Usted se ha registrado con exito','idOrden'=>$irOrder,'total'=>'$'.number_format($total,0,".",",")   ) );
-                        notificarEmail($idAgenda);
+                        notificarEmail($con,$idAgenda);
                     }catch(Exception $err){
                         echo json_encode( array("response"=>'fail','mensaje'=> 'Usted se ha registrado con exito' ) );
                     }
@@ -1203,7 +1203,7 @@ function generateRandomString($length = 10) {
     }
     return $randomString;
 }
-function notificarEmail($id){
+function notificarEmail($con,$id){
     //$id     = (isset($_POST['agenda']))?filter_var($_POST['agenda'],FILTER_SANITIZE_NUMBER_INT):0;
     $sql = "SELECT s.id as idAgenda,startdate,
     DAY(startdate) as dia,MONTH(startdate) as mes,YEAR(startdate) as anio,
