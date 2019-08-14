@@ -1007,6 +1007,7 @@ if(isset($_POST['action']) && isset($_SESSION['idPerfil']) && !empty($_SESSION['
                                 $total = (isset($_SESSION['totalventa']))?$_SESSION['totalventa']:0;
                                 if(!empty($irOrder)){
                                     echo json_encode( array("response"=>'success','mensaje'=> 'Sesion Iniciada','idOrden'=>$irOrder,'total'=>'$'.number_format($total,0,".",",") ) );
+                                    notificarEmail($idAgenda);
                                     unset($_SESSION['reserva']);
                                 }else{
                                     echo json_encode( array("response"=>'fail','mensaje'=> 'No se pudo crear orden.' ) );
@@ -1058,6 +1059,7 @@ if(isset($_POST['action']) && isset($_SESSION['idPerfil']) && !empty($_SESSION['
                         $idOrden = generarFacturacion($con,$bote,$plan,$fecha,$idAgenda);
                         $total = (isset($_SESSION['totalventa']))?$_SESSION['totalventa']:0;
                         echo json_encode( array("response"=>'success','mensaje'=> 'Usted se ha registrado con exito','idOrden'=>$irOrder,'total'=>'$'.number_format($total,0,".",",")   ) );
+                        notificarEmail($idAgenda);
                     }catch(Exception $err){
                         echo json_encode( array("response"=>'fail','mensaje'=> 'Usted se ha registrado con exito' ) );
                     }
@@ -1200,6 +1202,140 @@ function generateRandomString($length = 10) {
         $randomString .= $characters[rand(0, $charactersLength - 1)];
     }
     return $randomString;
-} 
+}
+function notificarEmail($id){
+    //$id     = (isset($_POST['agenda']))?filter_var($_POST['agenda'],FILTER_SANITIZE_NUMBER_INT):0;
+    $sql = "SELECT s.id as idAgenda,startdate,
+    DAY(startdate) as dia,MONTH(startdate) as mes,YEAR(startdate) as anio,
+    HOUR(startdate) as hora,MINUTE(startdate) as minuto,SECOND(startdate) as segundos,
+    cant,p.nombre as nombrePlan,c.nombre as nombreCliente,c.apellido,c.telefono,
+    c.direccion,c.email,documento,b.nombre as nombreBote,o.totalorden,IF(p.franjahoraria=1,'Día','Noche') AS horario,o.codigoreserva,o.id as idOrden,s.descripcion
+    FROM wp_es_solution_shedule s
+    INNER JOIN wp_es_planes p ON(p.id=s.idplan) 
+    INNER JOIN wp_es_clientes c ON(s.cliente=c.id)
+    INNER JOIN wp_es_botes b ON(idbote=b.id)
+    INNER JOIN wp_es_orden o ON(o.reserva=s.id)
+    WHERE s.estado = 'A' AND s.id=$id";
+    $result = $con->query($sql);
+    $abono      = 0;
+    $saldo      = '';
+    $email      = '';
+    $documento  = '';
+    $plan       = '';
+    $bote       = '';
+    $npersonas  = '';
+    $fecha      = '';
+    $nombre     = '';
+    $total      = '';
+    $saldo      = '';
+    if($result->num_rows>=1){
+        while($row = $result->fetch_assoc()){
+            $abono      = getTotalAbonado($con,$row['idAgenda']);
+            $saldo      = $row['totalorden'] - $abono;
+            $email      = $row['email'];
+            $documento  = $row['documento'];
+            $plan       = $row['nombrePlan'];
+            $bote       = $row['nombreBote'];
+            $npersonas  = $row['cant'];
+            $fecha      = $row['dia'].'/'.$row['mes'].'/'.$row['anio'];
+            $nombre     = $row['nombreCliente'];
+            $apellido   = $row['apellido'];
+            $codreserva = $row['codigoreserva'];
+            $idOrden    = $row['idOrden'];
+            $desc       = $row['descripcion'];
+            $total      = '$'.number_format($row['totalorden'],0,'.',',');
+            $saldo      = '$'.number_format($saldo,0,'.',',');
+            $abono      = '$'.number_format($abono,0,'.',',');
+        }
+    }
+    $sql = "SELECT nombre,cant,a.precio FROM wp_es_ordendetalle d INNER JOIN wp_es_adicionales a ON(a.id=d.iditem) WHERE idorden=$idOrden";
+    $result = $con->query($sql);
+    $catering = '';
+    if($result->num_rows>=1){
+        while($row = $result->fetch_assoc()){
+            //$catering = $catering.''.$row['nombre'].' x'.$row['cant'].' '.$row['precio']." \r\n";
+            $catering = $catering. "<tr><td colspan='2'>".$row['nombre'].' x'.$row['cant'].' '.$row['precio']."</td></tr>";
+        }
+    }
+
+
+    $para = 'itwarriortech@gmail.com';
+    $mensaje    = '';
+    $from       = 'reservasonline@botesdelabahia.com';
+    $header     = 'From: ' . $from . " \r\n";
+    $header    .= "X-Mailer: PHP/" . phpversion() . " \r\n";
+    $header    .= "Mime-Version: 1.0 \r\n";
+    $header    .= "Content-type: text/html; charset=iso-8859-1 \r\n";
+    $header    .= "Bcc: gerencia@botesdelabahia.com,reservas@botesdelabahia.com,itwarriortech@gmail.com \r\n";
+
+
+    $mensaje="
+    <img src='https://botesdelabahia.com/wp-content/uploads/2019/05/Logo4-Horizontal222px.png' alt='img' width='222' height='59'><br/>
+    <table>
+        <tr>
+            <td>Nombre</td>
+            <td>$nombre</td>
+        </tr>
+        <tr>
+            <td>Apellido</td>
+            <td>$apellido</td>
+        </tr>
+        <tr>
+            <td>Documento</td>
+            <td>$documento</td>
+        </tr>
+        <tr>
+            <td>Email</td>
+            <td>$email</td>
+        </tr>
+        <tr>
+            <td>Bote</td>
+            <td>$bote</td>
+        </tr>
+        <tr>
+            <td>Plan</td>
+            <td>$plan</td>
+        </tr>
+        <tr>
+            <td>Descripción</td>
+            <td>$desc</td>
+        </tr>
+        <tr>
+            <td>Nro. Personas</td>
+            <td>$npersonas</td>
+        </tr>
+        <tr>
+            <td>Fecha de salida</td>
+            <td>$fecha</td>
+        </tr>
+        <tr>
+            <td>Total</td>
+            <td>$total</td>
+        </tr>
+        <tr>
+            <td>Saldo</td>
+            <td>$saldo</td>
+        </tr>
+        <tr>
+            <td>Abono</td>
+            <td>$abono</td>
+        </tr>
+        <tr>
+            <td>Enviado el</td>
+            <td>".date('d/m/Y H:i:s4', time())."</td>
+        </tr>
+        <tr>
+            <td>Codigo Reserva</td>
+            <td>$codreserva</td>
+        </tr>
+        $catering
+    </table>"."<br/>***Favor validar si esta reserva tiene pagos abonados***";
+    $asunto     = 'RESERVA ONLINE';
+    mail($para, $asunto, utf8_decode($mensaje), $header);
+    echo json_encode( array("response"=>'success','mensaje'=> 'Mensaje Enviado.') );
+}
+
+
+
 $con->close();
 ?>
